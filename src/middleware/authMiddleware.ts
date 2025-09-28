@@ -8,7 +8,8 @@ export const authMiddleware = async (c:Context, next:Next)=>{
 
         const header = c.req.header("Authorization")
 
-        if(!header || header.startsWith("Bearer")){
+
+        if(!header || !header.startsWith("Bearer")){
             return c.json({
                 success:false,
                 message:"missing auth tokens",
@@ -19,7 +20,7 @@ export const authMiddleware = async (c:Context, next:Next)=>{
 
         const decoded = verify(token, process.env.JWT_SECRET!) 
 
-        c.set("user",decoded)
+        c.set("jwtPayload",decoded)
 
         await next();
         
