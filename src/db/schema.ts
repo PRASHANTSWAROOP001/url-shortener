@@ -19,7 +19,7 @@ export const userLinksTable = pgTable("user_link", {
     userId: integer("user_id").notNull().references(()=>usersTable.id, {onDelete:"cascade"}),
     globalUrlId:integer("global_url_id").notNull().references(()=>globalUrlTable.id, {onDelete:"cascade"}),
     shortCode:varchar({length:10}).notNull().unique(),
-    createdAt:timestamp("timestamp1").notNull().defaultNow(),
+    createdAt:timestamp().notNull().defaultNow(),
     clickCount:integer().$default(()=> 0)
 },(table)=>[
     index("user_link_userId").on(table.userId),
