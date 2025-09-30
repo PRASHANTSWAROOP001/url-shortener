@@ -9,9 +9,14 @@ import { and, eq } from "drizzle-orm";
 import type { userToken } from "../utils/types.js";
 import dotenv from "dotenv"
 import { redis } from "../index.js";
+import {SQSClient, SendMessageCommand} from "@aws-sdk/client-sqs"
 dotenv.config()
 
 const link = new Hono()
+
+const sqs = new SQSClient({
+  region:process.env.AWS_REGION
+})
 
 
 link.post(
@@ -93,7 +98,21 @@ export const fetchRedirect = link.get("/:url",async (c)=>{
 
     const shortCode = c.req.param("url")
 
+    // const clickDataValue:clickData = {
+    //   shortCode,
+    //   clickedAt: new Date().toISOString(),
+    //   ipAddress: c.req.header("x-forwarded-for") || c.req.header("cf-connecting-ip"),
+    //   userAgent:c.req.header("User-Agent"),
+    //   referrer:c.req.header("Referer"),
+    // }
+
+    // console.log(clickDataValue)
+
     const redisData = await redis.get(shortCode)
+
+    await redis.incr(`clicks:${shortCode}`)
+
+//    await sendClickToSqs(clickDataValue)
 
     if(redisData){
       return c.redirect(redisData, 302)
@@ -129,5 +148,32 @@ export const fetchRedirect = link.get("/:url",async (c)=>{
     }, 500)
   }
 })
+
+interface clickData {
+  shortCode:string,
+  clickedAt:string,
+  ipAddress?:string,
+  userAgent?:string,
+  referrer?:string,
+  country?:string
+}
+
+async function sendClickToSqs(clickData: clickData) {
+  const queueUrl = process.env.CLICK_QUEUE_URL;
+  console.log("Queue URL:", queueUrl);
+
+  try {
+    const command = new SendMessageCommand({
+      QueueUrl: queueUrl,
+      MessageBody: JSON.stringify(clickData),
+    });
+
+    const result = await sqs.send(command);
+    console.log("Message sent to SQS:", result.MessageId);
+  } catch (error) {
+    console.error("Failed to send SQS message:", error);
+  }
+}
+
 
 export default link;
