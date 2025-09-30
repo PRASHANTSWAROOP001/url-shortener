@@ -57,6 +57,9 @@ This project goes beyond a toy app — it implements caching, batching, event-dr
 ### 📂 Architecture Overview
 
 
+<img width="1127" height="476" alt="Architecture-Diagram" src="https://github.com/user-attachments/assets/f364dc73-320f-488f-84a9-0cd065a15409" />
+
+
 ---
 
 ### ⚖️ Trade-offs & Design Choices
