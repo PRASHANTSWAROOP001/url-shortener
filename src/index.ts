@@ -13,7 +13,8 @@ dotenv.config()
 export const db = drizzle(process.env.DATABASE_URL!);
 
 export const redis = new Redis({
-  port:6380
+  port:parseInt(process.env.REDIS_PORT || "6379", 10),
+  host:process.env.REDIS_HOST
 });
 
 const app = new Hono()
