@@ -140,6 +140,3 @@ This project demonstrates:
 * Trade-offs between **real-time vs eventual consistency**.
 * Applying **cloud-native scalability patterns** for durability and cost savings.
 
----
-
-Do you want me to also include a **"Why not MongoDB / DynamoDB"** style section to show you deliberately picked Postgres for normalization + joins? That often impresses interviewers.
