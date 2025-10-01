@@ -1,4 +1,15 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+     - postgres
+     - redis
+    env_file:
+     - .env     
   postgres:
     image: postgres:16
     container_name: url_shortner_container
